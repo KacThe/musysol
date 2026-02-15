@@ -6,7 +6,6 @@ const machineCountSelect = document.getElementById("machine-count-select");
 const machineIpRows = Array.from(document.querySelectorAll(".machine-ip-row"));
 
 const usernameInput = document.getElementById("username-input");
-const passwordInput = document.getElementById("password-input");
 
 const pingRow = document.getElementById("ping-row");
 const fpingRow = document.getElementById("fping-row");
@@ -84,9 +83,9 @@ const ACTION_BUTTONS = {
 function loadCredentialsFromStorage() {
     try {
         const savedUser = localStorage.getItem(LS_USER_KEY);
-        const savedPass = localStorage.getItem(LS_PASS_KEY);
         if (savedUser) usernameInput.value = savedUser;
-        if (savedPass) passwordInput.value = savedPass;
+        // Cleanup legacy key used by older versions.
+        localStorage.removeItem(LS_PASS_KEY);
     } catch (_) {
         // Ignore browsers/environments with blocked localStorage.
     }
@@ -96,13 +95,12 @@ function setupCredentialsAutosave() {
     const persist = () => {
         try {
             localStorage.setItem(LS_USER_KEY, usernameInput.value || "");
-            localStorage.setItem(LS_PASS_KEY, passwordInput.value || "");
+            localStorage.removeItem(LS_PASS_KEY);
         } catch (_) {
             // Ignore browsers/environments with blocked localStorage.
         }
     };
     usernameInput.addEventListener("input", persist);
-    passwordInput.addEventListener("input", persist);
 }
 
 function getCurlLabel(selected) {

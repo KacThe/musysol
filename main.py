@@ -456,7 +456,6 @@ def run_command(
             "ip10": ip10,
             "machine_count": machine_count_value,
             "username": username or "admin",
-            "password": password,
             "last_action": action,
             "ping_target": ping_target,
             "fping_start_ip": fping_start_ip,
