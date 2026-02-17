@@ -41,6 +41,9 @@ const ssBtn = document.getElementById("ss-btn");
 const ssToggleBtn = document.getElementById("ss-toggle-btn");
 const ssMenu = document.getElementById("ss-menu");
 const dfBtn = document.getElementById("df-btn");
+const nvidiaBtn = document.getElementById("nvidia-btn");
+const freeBtn = document.getElementById("free-btn");
+const lscpuBtn = document.getElementById("lscpu-btn");
 const uptimeBtn = document.getElementById("uptime-btn");
 const duVarBtn = document.getElementById("du-var-btn");
 const customBtn = document.getElementById("custom-btn");
@@ -75,6 +78,9 @@ const ACTION_BUTTONS = {
     ss_tulpn: ssBtn,
     ss_ant: ssBtn,
     df_h: dfBtn,
+    nvidia_smi: nvidiaBtn,
+    free_h: freeBtn,
+    lscpu: lscpuBtn,
     uptime: uptimeBtn,
     du_var_top20: duVarBtn,
     systemctl_status: systemctlBtn,
@@ -219,6 +225,9 @@ function setActiveButtonState() {
         dockerBtn,
         ssBtn,
         dfBtn,
+        nvidiaBtn,
+        freeBtn,
+        lscpuBtn,
         uptimeBtn,
         duVarBtn,
         systemctlBtn,
@@ -417,6 +426,9 @@ ssMenu.querySelectorAll(".menu-item").forEach((item) => {
 });
 
 dfBtn.addEventListener("click", () => selectAction("df_h", false));
+nvidiaBtn.addEventListener("click", () => selectAction("nvidia_smi", false));
+freeBtn.addEventListener("click", () => selectAction("free_h", false));
+lscpuBtn.addEventListener("click", () => selectAction("lscpu", false));
 uptimeBtn.addEventListener("click", () => selectAction("uptime", false));
 duVarBtn.addEventListener("click", () => selectAction("du_var_top20", false));
 

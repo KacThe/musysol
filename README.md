@@ -16,8 +16,8 @@ It is designed for quick infrastructure checks: networking, Docker, systemd serv
 ## Requirements
 
 - Python 3.10+
-- Access to target machines over SSH
-- `paramiko` installed in your environment
+- Python-venv
+- Access to target machines over SSH with `sudo` user
 
 ## Quick Start
 
@@ -32,7 +32,7 @@ uvicorn main:app --reload --host 0.0.0.0
 
 Open:
 
-- `http://localhost:6767`
+- `http://localhost:8000`
 
 ### Option B: Using setup script + Docker
 
@@ -51,7 +51,7 @@ Open:
 
 `docker-compose.yml` exposes:
 
-- Host `6767` -> Container `8000`
+- Host `8000` -> Container `6767`
 
 So the app is available at:
 

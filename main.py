@@ -388,6 +388,12 @@ def run_command(
                     cmd = f"curl -X {shlex.quote(curl_method)} {shlex.quote(curl_target)}"
             elif action == "df_h":
                 cmd = "df -h"
+            elif action == "nvidia_smi":
+                cmd = "nvidia-smi"
+            elif action == "free_h":
+                cmd = "free -h"
+            elif action == "lscpu":
+                cmd = "lscpu"
             elif action == "ss_tulpn":
                 cmd = "ss -tulpn"
             elif action == "ss_ant":
