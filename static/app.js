@@ -29,7 +29,8 @@ const fpingRangePreset = document.getElementById("fping-range-preset");
 const pingBtn = document.getElementById("ping-btn");
 const fpingBtn = document.getElementById("fping-btn");
 const routeBtn = document.getElementById("route-btn");
-const routeGetBtn = document.getElementById("route-get-btn");
+const routeToggleBtn = document.getElementById("route-toggle-btn");
+const routeMenu = document.getElementById("route-menu");
 const curlBtn = document.getElementById("curl-btn");
 const curlToggleBtn = document.getElementById("curl-toggle-btn");
 const curlMenu = document.getElementById("curl-menu");
@@ -51,6 +52,7 @@ const lastAction = action.value || "";
 let selectedAction = lastAction || "ping";
 let currentCurlAction = "curl_i";
 let currentDockerAction = "docker_ps";
+let currentRouteAction = "ip_route";
 let currentSsAction = "ss_tulpn";
 let currentSystemctlAction = "systemctl_status";
 
@@ -62,7 +64,7 @@ const ACTION_BUTTONS = {
     ping: pingBtn,
     fping_scan: fpingBtn,
     ip_route: routeBtn,
-    ip_route_get: routeGetBtn,
+    ip_route_get: routeBtn,
     curl_i: curlBtn,
     curl_ss: curlBtn,
     curl_plain: curlBtn,
@@ -110,6 +112,11 @@ function getCurlLabel(selected) {
     return "curl -X";
 }
 
+function getRouteLabel(selected) {
+    if (selected === "ip_route_get") return "ip route get";
+    return "ip route";
+}
+
 function getDockerLabel(selected) {
     if (selected === "docker_stats") return "Docker stats";
     if (selected === "docker_logs") return "Docker logs";
@@ -128,6 +135,7 @@ function getSystemctlLabel(selected) {
 }
 
 function closeAllMenus() {
+    routeMenu.hidden = true;
     curlMenu.hidden = true;
     dockerMenu.hidden = true;
     ssMenu.hidden = true;
@@ -145,7 +153,7 @@ function setMachineCount(count) {
     machineCountSelect.value = String(value);
     machineIpRows.forEach((row, idx) => {
         const show = idx + 2 <= value;
-        row.style.display = show ? "block" : "none";
+        row.style.display = show ? "grid" : "none";
         const input = row.querySelector("input");
         if (input) input.required = show;
     });
@@ -207,7 +215,6 @@ function setActiveButtonState() {
         pingBtn,
         fpingBtn,
         routeBtn,
-        routeGetBtn,
         curlBtn,
         dockerBtn,
         ssBtn,
@@ -221,7 +228,7 @@ function setActiveButtonState() {
     const activeBtn = ACTION_BUTTONS[selectedAction];
     if (activeBtn) activeBtn.classList.add("action-selected");
 
-    [curlMenu, dockerMenu, ssMenu, systemctlMenu].forEach((menu) => {
+    [routeMenu, curlMenu, dockerMenu, ssMenu, systemctlMenu].forEach((menu) => {
         menu.querySelectorAll(".menu-item").forEach((item) => {
             item.classList.toggle("menu-item-selected", item.dataset.action === selectedAction);
         });
@@ -292,6 +299,7 @@ function applySelectedActionToUI() {
         showCustomRow(true);
     }
 
+    routeBtn.textContent = getRouteLabel(currentRouteAction);
     curlBtn.textContent = getCurlLabel(currentCurlAction);
     dockerBtn.textContent = getDockerLabel(currentDockerAction);
     ssBtn.textContent = getSsLabel(currentSsAction);
@@ -320,6 +328,9 @@ function setupEnterSubmit(input, resolveAction) {
     });
 }
 
+if (lastAction === "ip_route" || lastAction === "ip_route_get") {
+    currentRouteAction = lastAction;
+}
 if (lastAction === "curl_i" || lastAction === "curl_ss" || lastAction === "curl_plain" || lastAction === "curl_x") {
     currentCurlAction = lastAction;
 }
@@ -349,8 +360,19 @@ runBtn.addEventListener("click", () => {
 customBtn.addEventListener("click", () => selectAction("custom_cmd", true));
 pingBtn.addEventListener("click", () => selectAction("ping", true));
 fpingBtn.addEventListener("click", () => selectAction("fping_scan", true));
-routeBtn.addEventListener("click", () => selectAction("ip_route", false));
-routeGetBtn.addEventListener("click", () => selectAction("ip_route_get", true));
+routeBtn.addEventListener("click", () => selectAction(currentRouteAction, currentRouteAction === "ip_route_get"));
+routeToggleBtn.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleMenu(routeMenu);
+});
+
+routeMenu.querySelectorAll(".menu-item").forEach((item) => {
+    item.addEventListener("click", () => {
+        currentRouteAction = item.dataset.action;
+        selectAction(currentRouteAction, currentRouteAction === "ip_route_get");
+        routeMenu.hidden = true;
+    });
+});
 
 curlBtn.addEventListener("click", () => selectAction(currentCurlAction, true));
 curlToggleBtn.addEventListener("click", (event) => {

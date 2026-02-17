@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Remote Command Tool</title>
+    <title>SYSTOOL - Remote Command Console</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1 class="brand">KACPER HUB</h1>
-    <h2>Remote Commands</h2>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <main class="app-shell">
+    <header class="app-header">
+        <p class="eyebrow">Infrastructure toolkit</p>
+        <h1 class="brand">SYSTOOL</h1>
+        <h2>Remote Command Console</h2>
+    </header>
     {% set service_presets = [
         "haproxy",
         "grafana-server",
@@ -35,7 +40,7 @@
     <form method="post" id="cmd-form">
         <div class="row">
             <label>IP</label>
-            <input type="text" name="ip" placeholder="IP of machine where command will run" value="{{ ip }}" required id="ip1-input" />
+            <input type="text" name="ip" placeholder="IP or host (e.g. mojamaszyna.kacper.pl)" value="{{ ip }}" required id="ip1-input" />
             <select id="machine-count-select" class="inline-select" name="machine_count">
                 {% for n in range(1, 11) %}
                 <option value="{{ n }}" {% if machine_count == n %}selected{% endif %}>{{ n }} machine{% if n > 1 %}s{% endif %}</option>
@@ -45,8 +50,8 @@
         {% for addr in extra_ips %}
         {% set ip_idx = loop.index + 1 %}
         <div class="row machine-ip-row" id="ip{{ ip_idx }}-row" style="display:none;">
-            <label>IP #{{ ip_idx }}</label>
-            <input type="text" name="ip{{ ip_idx }}" id="ip{{ ip_idx }}-input" placeholder="Machine IP #{{ ip_idx }}" value="{{ addr }}" />
+            <label for="ip{{ ip_idx }}-input">IP #{{ ip_idx }}</label>
+            <input type="text" name="ip{{ ip_idx }}" id="ip{{ ip_idx }}-input" placeholder="Machine IP or host #{{ ip_idx }}" value="{{ addr }}" />
         </div>
         {% endfor %}
         <div class="row">
@@ -108,8 +113,14 @@
             <button type="button" id="custom-btn">Custom</button>
             <button type="button" id="ping-btn">Ping</button>
             <button type="button" id="fping-btn">fping scan</button>
-            <button type="button" id="route-btn">IP route</button>
-            <button type="button" id="route-get-btn">IP route get</button>
+            <div class="split" id="route-split">
+                <button type="button" class="split-main" id="route-btn">ip route</button>
+                <button type="button" class="split-toggle" id="route-toggle-btn">▾</button>
+                <div class="split-menu" id="route-menu" hidden>
+                    <button type="button" class="menu-item" data-action="ip_route"><span>ip route</span><span class="menu-help" title="Show full kernel routing table.">?</span></button>
+                    <button type="button" class="menu-item" data-action="ip_route_get"><span>ip route get</span><span class="menu-help" title="Show route lookup for a single target IP/host.">?</span></button>
+                </div>
+            </div>
             <div class="split" id="curl-split">
                 <button type="button" class="split-main" id="curl-btn">Curl</button>
                 <button type="button" class="split-toggle" id="curl-toggle-btn">▾</button>
@@ -164,6 +175,7 @@
     {% else %}
     <pre class="output">{{ result }}</pre>
     {% endif %}
+    </main>
     <script src="/static/app.js" defer></script>
 </body>
 </html>

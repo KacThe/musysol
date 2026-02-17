@@ -1,170 +1,478 @@
 :root {
-            --bg: #0b0b12;
-            --panel: #141426;
-            --text: #e7e7f2;
-            --muted: #9b9bb2;
-            --border: #2a2a45;
-            --input: #101022;
-            --accent: #5b2a86;
-            --accent-2: #9a7bd6;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 24px;
-            background: radial-gradient(1200px 800px at 10% 10%, #18162b 0%, var(--bg) 55%);
-            color: var(--text);
-        }
-        .brand {
-            margin: 0 0 12px 0;
-            font-size: 36px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: linear-gradient(110deg, #2a0b4f 0%, #6b38b7 35%, #efe7ff 50%, #6b38b7 65%, #2a0b4f 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% auto;
-            animation: shine 2.5s linear infinite;
-        }
-        @keyframes shine {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-        .row { margin-bottom: 12px; }
-        .row label { display: inline-block; width: 110px; }
-        .inline-btn { margin-left: 8px; }
-        .inline-select { width: 220px; margin-left: 8px; }
-        input, select {
-            padding: 8px 10px;
-            width: 240px;
-            background: var(--input);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-        }
-        #custom-command-input {
-            width: min(920px, calc(100vw - 220px));
-            max-width: 100%;
-            font-family: Consolas, "Courier New", monospace;
-        }
-        input::placeholder { color: var(--muted); }
-        button {
-            padding: 8px 12px;
-            margin-right: 8px;
-            background: linear-gradient(180deg, #2a1442 0%, #1a0f2a 100%);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            cursor: pointer;
-        }
-button:hover { border-color: var(--accent-2); }
-.actions button.action-selected,
-.actions .split-main.action-selected {
-    border-color: var(--accent-2);
-    box-shadow: 0 0 0 1px rgba(154, 123, 214, 0.35) inset;
-    background: linear-gradient(180deg, #352053 0%, #23133a 100%);
+    --bg-a: #f4f8fb;
+    --bg-b: #e6eef5;
+    --surface: rgba(255, 255, 255, 0.9);
+    --surface-strong: #ffffff;
+    --ink: #17283b;
+    --muted: #5b7086;
+    --border: #c7d6e4;
+    --primary: #1c7a9f;
+    --primary-2: #2f93a7;
+    --accent: #e8893b;
+    --accent-2: #f0a260;
+    --ok: #2f9962;
+    --shadow: 0 16px 40px rgba(23, 40, 59, 0.12);
 }
-.menu-item.menu-item-selected {
-    border-color: var(--accent-2);
-    background: #1d1d36;
+
+* {
+    box-sizing: border-box;
 }
-#run-btn {
-    background: linear-gradient(180deg, #5b2a86 0%, #3f1f62 100%);
-    border-color: #7f59ba;
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Avenir Next", "Trebuchet MS", Verdana, sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(900px 500px at 12% -10%, #d3f0fb 0%, transparent 60%),
+        radial-gradient(700px 500px at 100% 10%, #fbe4cd 0%, transparent 62%),
+        linear-gradient(140deg, var(--bg-a) 0%, var(--bg-b) 70%);
+}
+
+.bg-grid {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgba(19, 54, 87, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(19, 54, 87, 0.06) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 95%);
+}
+
+.app-shell {
+    position: relative;
+    z-index: 1;
+    max-width: 1340px;
+    margin: 0 auto;
+    padding: 28px 20px 36px;
+}
+
+.app-header {
+    margin-bottom: 18px;
+    animation: fade-up 0.45s ease-out both;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--primary);
     font-weight: 700;
 }
-.actions { display: flex; flex-wrap: wrap; gap: 8px; }
-        .actions button { margin-right: 0; }
-        .split {
-            position: relative;
-            display: inline-flex;
-            align-items: stretch;
-        }
-        .split-main {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            margin-right: 0;
-        }
-        .split-toggle {
-            width: 36px;
-            padding: 8px 0;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-            margin-right: 0;
-        }
-        .split-menu {
-            position: absolute;
-            top: calc(100% + 6px);
-            right: 0;
-            z-index: 10;
-            min-width: 210px;
-            background: #16162a;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-            padding: 6px;
-        }
-        .split-menu[hidden] { display: none; }
-        .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            text-align: left;
-            padding: 8px 10px;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            background: transparent;
-            color: var(--text);
-            cursor: pointer;
-        }
-        .menu-item:hover {
-            border-color: var(--accent-2);
-            background: #1d1d36;
-        }
-        .menu-help {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 16px;
-            height: 16px;
-            margin-left: 10px;
-            border-radius: 50%;
-            border: 1px solid var(--accent-2);
-            color: var(--accent-2);
-            font-size: 11px;
-            font-weight: 700;
-            line-height: 1;
-        }
-        .output {
-            margin-top: 16px;
-            background: var(--panel);
-            padding: 12px;
-            border: 1px solid var(--border);
-            color: var(--text);
-            border-radius: 8px;
-        }
-        .output-list {
-            margin-top: 16px;
-            display: grid;
-            gap: 14px;
-        }
-        .output-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .output-title {
-            padding: 10px 12px;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, #191933 0%, #121226 100%);
-        }
-        .output-body {
-            margin: 0;
-            padding: 12px;
-            color: var(--text);
-            white-space: pre;
-            overflow-x: auto;
-        }
+
+.brand {
+    margin: 0;
+    font-size: clamp(34px, 5vw, 52px);
+    line-height: 1;
+    letter-spacing: 0.05em;
+    font-weight: 800;
+    color: #10253a;
+    text-transform: uppercase;
+}
+
+h2 {
+    margin: 8px 0 0;
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: #29445d;
+    font-weight: 700;
+}
+
+#cmd-form {
+    position: relative;
+    background: var(--surface);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    animation: fade-up 0.55s ease-out both;
+}
+
+.row {
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 128px minmax(280px, 420px) auto auto;
+    gap: 10px 12px;
+    align-items: center;
+}
+
+.row label {
+    font-weight: 700;
+    color: #27405a;
+}
+
+input,
+select {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface-strong);
+    color: var(--ink);
+    font-size: 14px;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.inline-select {
+    width: 220px;
+}
+
+input::placeholder {
+    color: #7a8fa3;
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+    outline: none;
+    border-color: var(--primary-2);
+    box-shadow: 0 0 0 3px rgba(47, 147, 167, 0.2);
+}
+
+button {
+    border: 1px solid #9eb7cb;
+    border-radius: 10px;
+    padding: 9px 13px;
+    font-size: 14px;
+    color: #17324a;
+    background: linear-gradient(180deg, #ffffff 0%, #edf4fa 100%);
+    cursor: pointer;
+    transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(20, 61, 94, 0.12);
+    border-color: #8aa7bd;
+}
+
+#run-btn {
+    background: linear-gradient(180deg, var(--primary-2) 0%, var(--primary) 100%);
+    border-color: #1f738f;
+    color: #f7fdff;
+    font-weight: 800;
+}
+
+.actions {
+    position: relative;
+    z-index: 40;
+    margin-top: 12px;
+    margin-bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions > button,
+.actions > .split {
+    animation: pop-in 0.26s ease-out both;
+}
+
+.actions > :nth-child(1) {
+    animation-delay: 0.03s;
+}
+
+.actions > :nth-child(2) {
+    animation-delay: 0.06s;
+}
+
+.actions > :nth-child(3) {
+    animation-delay: 0.09s;
+}
+
+.actions > :nth-child(4) {
+    animation-delay: 0.12s;
+}
+
+.actions > :nth-child(5) {
+    animation-delay: 0.15s;
+}
+
+.actions > :nth-child(6) {
+    animation-delay: 0.18s;
+}
+
+.actions > :nth-child(7) {
+    animation-delay: 0.21s;
+}
+
+.actions > :nth-child(8) {
+    animation-delay: 0.24s;
+}
+
+.actions > :nth-child(9) {
+    animation-delay: 0.27s;
+}
+
+.actions > :nth-child(10) {
+    animation-delay: 0.3s;
+}
+
+.actions > :nth-child(11) {
+    animation-delay: 0.33s;
+}
+
+.actions > :nth-child(12) {
+    animation-delay: 0.36s;
+}
+
+.actions button.action-selected,
+.actions .split-main.action-selected {
+    border-color: #2b7e99;
+    background: linear-gradient(180deg, #e0f2f8 0%, #d3ecf5 100%);
+    color: #133348;
+    box-shadow: 0 0 0 2px rgba(44, 125, 155, 0.2) inset;
+}
+
+.split {
+    position: relative;
+    display: inline-flex;
+    align-items: stretch;
+}
+
+.split-main {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.split-toggle {
+    width: 34px;
+    padding: 9px 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.split-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 20;
+    min-width: 250px;
+    padding: 7px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #f8fbfd;
+    box-shadow: 0 14px 28px rgba(16, 49, 76, 0.16);
+}
+
+.actions .split-menu {
+    top: auto;
+    bottom: calc(100% + 8px);
+    z-index: 200;
+}
+
+#fping-row {
+    grid-template-columns: 128px minmax(220px, 1fr) minmax(220px, 1fr) minmax(220px, 280px);
+}
+
+#fping-start-input {
+    grid-column: 2;
+}
+
+#fping-end-input {
+    grid-column: 3;
+    width: 100%;
+}
+
+#fping-range-preset {
+    grid-column: 4;
+    width: 100%;
+    margin-left: 0;
+}
+
+.split-menu[hidden] {
+    display: none;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #17324a;
+    text-align: left;
+    padding: 9px 10px;
+}
+
+.menu-item:hover {
+    border-color: #98bdd2;
+    background: #eaf4f9;
+}
+
+.menu-item.menu-item-selected {
+    border-color: #81abc3;
+    background: #dff0f8;
+}
+
+.menu-help {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px;
+    height: 17px;
+    border-radius: 999px;
+    border: 1px solid #7ea4bb;
+    color: #39596f;
+    font-size: 11px;
+    font-weight: 800;
+    margin-left: 8px;
+}
+
+.output {
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    background: #0f23341a;
+    border: 1px solid #c3d5e3;
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    white-space: pre-wrap;
+    animation: fade-up 0.65s ease-out both;
+}
+
+.output-list {
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    display: grid;
+    gap: 12px;
+    animation: fade-up 0.65s ease-out both;
+}
+
+.output-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.output-title {
+    padding: 10px 12px;
+    font-weight: 800;
+    color: #17324a;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #f4fbff 0%, #ebf5fb 100%);
+}
+
+.output-body {
+    margin: 0;
+    padding: 12px;
+    white-space: pre;
+    overflow-x: auto;
+    color: #16293c;
+}
+
+@keyframes fade-up {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pop-in {
+    0% {
+        opacity: 0;
+        transform: translateY(7px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 980px) {
+    .row {
+        grid-template-columns: 120px minmax(0, 1fr);
+    }
+
+    .inline-select {
+        width: 100%;
+    }
+
+    #fping-row {
+        grid-template-columns: 120px minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    #fping-start-input {
+        grid-column: 2;
+    }
+
+    #fping-end-input {
+        grid-column: 3;
+    }
+
+    #fping-range-preset {
+        grid-column: 2 / 4;
+    }
+}
+
+@media (max-width: 680px) {
+    .app-shell {
+        padding: 16px 12px 24px;
+    }
+
+    #cmd-form {
+        padding: 14px;
+        border-radius: 14px;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .row label {
+        font-size: 13px;
+    }
+
+    .actions {
+        gap: 6px;
+    }
+
+    .actions > button,
+    .actions > .split {
+        width: 100%;
+    }
+
+    .split {
+        display: grid;
+        grid-template-columns: 1fr 42px;
+        width: 100%;
+    }
+
+    .split-main,
+    .split-toggle {
+        width: 100%;
+    }
+
+    .split-menu {
+        left: 0;
+        right: 0;
+        min-width: 0;
+    }
+
+    #fping-row {
+        grid-template-columns: 1fr;
+    }
+
+    #fping-start-input,
+    #fping-end-input,
+    #fping-range-preset {
+        grid-column: auto;
+    }
+}

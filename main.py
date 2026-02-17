@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 import ipaddress
 import re
 import shlex
+import socket
 
 try:
     import paramiko
@@ -34,6 +35,30 @@ def _is_ipv4(value: str) -> bool:
 def _is_host_or_ipv4(value: str) -> bool:
     value = value.strip()
     return bool(_IPV4_RE.match(value)) or bool(_HOST_RE.match(value))
+
+
+def _resolve_host_to_ipv4(value: str) -> tuple[str | None, str | None]:
+    candidate = value.strip()
+    if not candidate:
+        return None, "empty host"
+    if _is_ipv4(candidate):
+        return candidate, None
+    if not _HOST_RE.match(candidate):
+        return None, "invalid hostname format"
+
+    try:
+        infos = socket.getaddrinfo(candidate, None, family=socket.AF_INET, type=socket.SOCK_STREAM)
+    except Exception as exc:
+        return None, str(exc)
+
+    for info in infos:
+        sockaddr = info[4]
+        if isinstance(sockaddr, tuple) and sockaddr:
+            resolved = str(sockaddr[0]).strip()
+            if _is_ipv4(resolved):
+                return resolved, None
+
+    return None, "no IPv4 address found"
 
 
 def _is_http_url(value: str) -> bool:
@@ -231,29 +256,48 @@ def run_command(
     else:
         hosts = ip_values[:machine_count_value]
         invalid_hosts = []
+        unresolved_hosts = []
         missing_hosts = []
+        host_mappings = []
         for idx, host in enumerate(hosts, start=1):
             if not host:
                 missing_hosts.append(idx)
                 continue
-            if not _is_ipv4(host):
+            if not _is_host_or_ipv4(host):
                 invalid_hosts.append((idx, host))
+                continue
+            resolved_host, resolve_error = _resolve_host_to_ipv4(host)
+            if not resolved_host:
+                unresolved_hosts.append((idx, host, resolve_error or "resolution failed"))
+                continue
+            host_mappings.append((host, resolved_host))
 
         if missing_hosts:
             output = (
-                "Error: missing IPv4 for machine "
+                "Error: missing host for machine "
                 + ", ".join(str(idx) for idx in missing_hosts)
                 + "."
             )
             cmd = ""
         elif invalid_hosts:
             output = (
-                "Error: invalid IPv4 for machine "
+                "Error: invalid host/IP for machine "
                 + ", ".join(f"{idx} ({host})" for idx, host in invalid_hosts)
                 + "."
             )
             cmd = ""
+        elif unresolved_hosts:
+            output = (
+                "Error: cannot resolve host for machine "
+                + ", ".join(
+                    f"{idx} ({host}): {reason}"
+                    for idx, host, reason in unresolved_hosts
+                )
+                + "."
+            )
+            cmd = ""
         else:
+            hosts = [resolved for _, resolved in host_mappings]
             cmd = ""
             if action == "ping":
                 if not ping_target:
@@ -403,7 +447,10 @@ def run_command(
                     )
                 result_blocks = [
                     {
-                        "title": f"Output 1 - IP {hosts[0]}",
+                        "title": (
+                            f"Output 1 - Host {host_mappings[0][0]}"
+                            f" (IP {host_mappings[0][1]})"
+                        ),
                         "body": single_output,
                     }
                 ]
@@ -429,10 +476,16 @@ def run_command(
                     ]
                 result_blocks = [
                     {
-                        "title": f"Output {idx} - IP {host}",
+                        "title": (
+                            f"Output {idx} - Host {original_host}"
+                            f" (IP {resolved_host})"
+                        ),
                         "body": result,
                     }
-                    for idx, (host, result) in enumerate(zip(hosts, results), start=1)
+                    for idx, ((original_host, resolved_host), result) in enumerate(
+                        zip(host_mappings, results),
+                        start=1,
+                    )
                 ]
                 output = "\n\n".join(
                     f"{block['title']}\n{block['body']}" for block in result_blocks
