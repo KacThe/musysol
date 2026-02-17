@@ -67,8 +67,6 @@ So the app is available at:
 
 ## Screenshots
 
-> Add your screenshots to `docs/screenshots/` with the filenames below.
-
 ### Single host route output
 
 ![SYSTOOL single host](docs/screenshots/systool-single-host-route.png)
